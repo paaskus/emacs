@@ -1,10 +1,40 @@
+;; INSTALL PACKAGES
+;; --------------------------------------
 (package-initialize)
+
+;; MELPA
+(require 'package)
+(add-to-list 'package-archives
+             '("melpa" . "https://melpa.org/packages/"))
+(when (< emacs-major-version 24)
+  ;; For important compatibility libraries like cl-lib
+  (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
+
+(when (not package-archive-contents)
+  (package-refresh-contents))
+
+(defvar myPackages
+  '(better-defaults
+    elpy
+    latex-preview-pane
+    latex-extra
+    latex-pretty-symbols
+    material-theme))
+
+(mapc #'(lambda (package)
+    (unless (package-installed-p package)
+      (package-install package)))
+      myPackages)
+
+;; BASIC CUSTOMIZATION
+;; --------------------------------------
+
+(setq inhibit-startup-message t) ;; hide the startup message
+(load-theme 'material t) ;; load material theme
+(global-linum-mode t) ;; enable line numbers globally
 
 ;; Hide toolbar
 (tool-bar-mode -1)
-
-;; Hide splash screen
-(setq inhibit-startup-message t)
 
 ;; Paren mode (highlight matching parentheses)
 (show-paren-mode 1)
@@ -14,18 +44,6 @@
 
 ;; Indent using spaces
 (setq-default indent-tabs-mode nil)
-
-;; Auto-enable linum-mode
-(global-linum-mode 1)
-
-;; MELPA
-(require 'package)
-(add-to-list 'package-archives
-             '("melpa" . "https://melpa.org/packages/"))
-(when (< emacs-major-version 24)
-  ;; For important compatibility libraries like cl-lib
-  (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
-(package-initialize)
 
 ;; Use web-mode for .html.erb files
 (add-to-list 'auto-mode-alist '("\\.html.erb\\'" . web-mode))
@@ -42,11 +60,6 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(ansi-color-faces-vector
-   [default default default italic underline success warning error])
- '(ansi-color-names-vector
-   ["#242424" "#e5786d" "#95e454" "#cae682" "#8ac6f2" "#333366" "#ccaa8f" "#f6f3e8"])
- '(custom-enabled-themes (quote (adwaita)))
  '(markdown-command "pandoc"))
 
 ;; Autocomplete
@@ -70,3 +83,10 @@
 
 ;; LaTeX
 (latex-preview-pane-enable) ;; Load latex-preview pane automatically with LaTeX files
+(add-hook 'LaTeX-mode-hook #'latex-extra-mode) ;; latex-extra
+(require 'latex-pretty-symbols) ;; pretty symbols
+
+;; Python
+(elpy-enable) ;; enable elpy
+
+;; init.el ends here
